@@ -36,8 +36,6 @@ export default function ContestHistory(props) {
                     ]}
                     height={300}
                 />
-
-
                 <TableContainer>
                     <Table>
                         <TableHead>
