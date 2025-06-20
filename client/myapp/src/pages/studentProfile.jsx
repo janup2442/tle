@@ -34,7 +34,7 @@ export default function StudentProfilePage() {
 
     return (
         <>
-            <h1>Hi this is anup jaiswal</h1>
+            <h1>Student Profile Page</h1>
             <Box>
                 {
                     isLoading ? <Alert severity='info'>
