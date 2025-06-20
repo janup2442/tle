@@ -17,6 +17,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Link } from 'react-router-dom'
+import Avatar from '@mui/material/Avatar';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -97,8 +98,25 @@ export default function StudentsTable({ rows }) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }
 
+  const defineRating = (rating)=>{
+    if(rating<1200){
+      return "gray"
+    }else if(rating>=1200 && rating<=1399){
+      return "green"
+    }else if(rating>=1400 && rating<=1599){
+      return "cyan"
+    }else if(rating>=1600 && rating<=1899){
+      return "blue"
+    }else if(rating>=1900 && rating<=2099){
+      return "voilet"
+    }else if(rating>=2100 && rating<=2399){
+      return "orange"
+    }else{
+      return "red"
+    }
+  }
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
@@ -122,7 +140,8 @@ export default function StudentsTable({ rows }) {
 
             <TableRow key={row._id}>
               <TableCell component="th" scope="row">
-                <Link to={`/studentprofile/${row.handle}`}>
+                <Link to={`/studentprofile/${row.handle}`} className='d-flex align-items-center'>
+                  <Avatar alt="Remy Sharp" src={row.avatar} className='me-2'/>
                   {row.firstName + ' ' + row.lastName}
                 </Link>
               </TableCell>
@@ -135,10 +154,10 @@ export default function StudentsTable({ rows }) {
               <TableCell style={{ width: 160 }} align="right">
                 {row.handle}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
+              <TableCell style={{ width: 160,color:defineRating(row.rating) }} align="right" className='fw-bold'>
                 {row.rating}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
+              <TableCell style={{ width: 160,color:defineRating(row.maxRating) }} align="right" className='fw-bold'>
                 {row.maxRating}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
@@ -157,7 +176,6 @@ export default function StudentsTable({ rows }) {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
