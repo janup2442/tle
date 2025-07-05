@@ -64,7 +64,7 @@ export default function StudentAddForm() {
                 sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
                 noValidate
                 autoComplete="off"
-                className='d-flex align-items-center shadow-sm my-2'>
+                className='d-flex align-items-center my-2'>
                 <div>
                     <TextField
                         label="Student Handle"

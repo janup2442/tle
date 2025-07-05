@@ -18,7 +18,11 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Link } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -86,6 +90,7 @@ TablePaginationActions.propTypes = {
 export default function StudentsTable({ rows }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [loading,setLoading] = React.useState(false);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -115,6 +120,24 @@ export default function StudentsTable({ rows }) {
     }else{
       return "red"
     }
+  }
+
+  const navigate = useNavigate();
+  const handleDelete = async (handle)=>{
+    setLoading(true);
+    try{
+      const result = await axios.get(`http://localhost:8500/edituser/delete?handle=${handle}`);
+      if(result.status >= 200  && result.status < 400){
+        alert("User deleted successfully ")
+        navigate('/');
+      }else{
+        alert("something went worng")
+      }
+    }catch(err){
+      alert("Something went wrong")
+    }
+
+    setLoading(false)
   }
   return (
     <TableContainer component={Paper}>
@@ -160,7 +183,14 @@ export default function StudentsTable({ rows }) {
                 {row.maxRating}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
-                {'no data'}
+                <div>
+                  <button className='btn text-secondary' type='button'><EditDocumentIcon/></button>
+                  <button className='btn text-danger' type='button' onClick={()=>handleDelete(row.handle)}>
+                    {
+                      loading?<CircularProgress/>:<DeleteIcon/>
+                    }
+                  </button>
+                </div>
               </TableCell>
             </TableRow>
 

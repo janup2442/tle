@@ -2,8 +2,8 @@ import axios from 'axios'
 import { UserModel } from '../models/user.js';
 
 const addUser = (req, res) => {
-    const { handle, email, phone ,name} = req.body;
-    
+    const { handle, email, phone, name } = req.body;
+    // sanetize
     // prepare the submission details of the new user
     const fetchSubmissions = () => {
         const prepareSubmissionList = [];
@@ -20,7 +20,8 @@ const addUser = (req, res) => {
                             problemDificulty: item.problem.rating,
                             verdict: item.verdict == "OK" ? "Accepted" : item.verdict,
                             timeConsumed: item.timeConsumedMillis,
-                            memoryConsumed: item.memoryConsumedBytes
+                            memoryConsumed: item.memoryConsumedBytes,
+                            submittedOn: item.creationTimeSeconds
                         })
                     )
                 }
@@ -58,10 +59,10 @@ const addUser = (req, res) => {
                 const data = await getUserInfo(handle)
                 const userObject = new UserModel({
                     handle: data[0].handle,
-                    firstName: data[0].firstName==undefined?name:data[0].firstName,
-                    lastName: data[0].lastName==undefined?"":data[0].lastName,
-                    email:email==undefined?"no data":email,
-                    phone:phone==undefined?"no data":phone,
+                    firstName: data[0].firstName == undefined ? name : data[0].firstName,
+                    lastName: data[0].lastName == undefined ? "" : data[0].lastName,
+                    email: email == undefined ? "no data" : email,
+                    phone: phone == undefined ? "no data" : phone,
                     avatar: data[0].avatar,
                     titlePhoto: data[0].titlePhoto,
                     lastOnlineTimeSeconds: data[0].lastOnlineTimeSeconds,
@@ -85,10 +86,10 @@ const addUser = (req, res) => {
     }
 
 
-    Promise.all([fetchRatings(),fetchSubmissions()])
-    .then(([ratings,submissions])=>{
-        fetchUserInfo(submissions,ratings);
-    });
+    Promise.all([fetchRatings(), fetchSubmissions()])
+        .then(([ratings, submissions]) => {
+            fetchUserInfo(submissions, ratings);
+        });
 }
 
 
@@ -116,14 +117,32 @@ const getUserInfo = async (handle) => {
 
 
 
-const getAllUsers = async (req,res)=>{
+const getAllUsers = async (req, res) => {
     const data = await UserModel.find().select('handle firstName lastName rating maxRating avatar email phone');
     res.json(data);
 }
 
-const getOneUser  =async (req,res)=>{
+const getOneUser = async (req, res) => {
     const userHandle = req.query.handle
-    const data  = await UserModel.findOne({handle:userHandle});
+    const data = await UserModel.findOne({ handle: userHandle });
     res.json(data)
 }
-export {addUser ,getAllUsers,getOneUser}
+
+
+const deleteUser = async (req, res) => {
+    const userHandle = req.query.handle;
+    try {
+        if (!userHandle || userHandle === '') {
+            return res.status(402).json({ message: "User not found" });
+        }
+        const result = await UserModel.deleteOne({ handle: userHandle });
+        if (result.deletedCount > 0) {
+            res.status(200).json({ message: "User deleted successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+export { addUser, getAllUsers, getOneUser ,deleteUser}

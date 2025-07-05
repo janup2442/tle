@@ -17,6 +17,6 @@
     "express": "^5.1.0",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
-    "node-cron": "^4.1.0"
+    "node-cron": "^4.1.1"
   }
 }

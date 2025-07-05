@@ -1,39 +1,21 @@
 import connectDB from "../configs/db.js";
-import {UserModel,UserSubmissionData,UserRatingData} from "../models/user.js";
-import { userInfo,userStatus,userRating } from "../mockdata/userData.js";
+import { UserModel } from "../models/user.js";
+import axios from "axios";
+
 connectDB();
+const fetchUser = async () => {
+    try {
+        console.log('function is called');
+        
+        const result = await UserModel.find();
+        if (result) {
+            console.log(result);
+        }
+    } catch (error) {
+        console.log(error.message);
+
+    }
+}
 
 
-
-const prepareSubmissionList = [];
-userStatus.result.map(item=>
-    FeferSubmissionList.push({
-        id:item.id,
-        contestId:item.contestId,
-        problemIndex:item.problem.index,
-        problemName:item.problem.name,
-        problemDificulty:item.problem.rating,
-        verdict:item.verdict == "OK" ?"Accepted":item.verdict,
-        timeConsumed:item.timeConsumedMillis,
-        memoryConsumed:item.memoryConsumedBytes
-    })
-)
-
-
-
-
-
-
-
-
-
-
-console.log("all done");
-console.log(prepareSubmissionList.length);
-
-
-
-
-
-
-
+fetchUser();

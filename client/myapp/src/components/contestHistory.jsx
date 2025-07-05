@@ -6,7 +6,6 @@ import TableFooter from "@mui/material/TableFooter";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import PropTypes from 'prop-types';
-import { LineChart } from '@mui/x-charts/LineChart';
 import Divider from "@mui/material/Divider";
 import { useState } from 'react'
 import TablePagination from "@mui/material/TablePagination";
@@ -18,6 +17,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, Tooltip ,ResponsiveContainer } from 'recharts';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -85,40 +85,44 @@ export default function ContestHistory(props) {
 
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(7);
+    let maxRating = 0;
     const { contests } = props;
-    const ratingBucket = [];
-    const userRating = [];
+    // const codeforcesRatingTiers = [
+    //     { lower: 0, upper: 1199, title: "Newbie", color: "gray" },
+    //     { lower: 1200, upper: 1399, title: "Pupil", color: "green" },
+    //     { lower: 1400, upper: 1599, title: "Specialist", color: "cyan" },
+    //     { lower: 1600, upper: 1899, title: "Expert", color: "blue" },
+    //     { lower: 1900, upper: 2099, title: "Candidate Master", color: "purple" },
+    //     { lower: 2100, upper: 2299, title: "Master", color: "orange" },
+    //     { lower: 2300, upper: 2399, title: "International Master", color: "orange" },
+    //     { lower: 2400, upper: 2599, title: "Grandmaster", color: "red" },
+    //     { lower: 2600, upper: 2999, title: "International Grandmaster", color: "red" },
+    //     { lower: 3000, upper: Infinity, title: "Legendary Grandmaster", color: "red" }
+    // ];
+    const ratingBucket = [0,4000];
+    const userRatingData =[]
     const prepareRating = () => {
+        let i  =1;
         contests?.map(item => {
-            userRating.push(item.newRating);
+            maxRating = Math.max(item.newRating,maxRating)
+            userRatingData.push({
+                contest:i++,
+                rating:item.newRating,
+                change:(item.newRating - item.oldRating)
+            })
         })
     }
-    const prepareBucket = () => {
-        let i = 0;
-        let offset = 4000 / (contests?.length);
-        for (let j = i; j < (contests?.length); j++) {
-            ratingBucket.push(i);
-            i += offset;
-        }
-    }
-
-    let contestCopy  = [];
-    if(Array.isArray(contests)){
-        contestCopy = [...contests]
-        contestCopy.reverse();
-    }
-    
-    
-
-    prepareBucket();
 
     prepareRating();
 
-
+    let contestCopy = [];
+    if (Array.isArray(contests)) {
+        contestCopy = [...contests]
+        contestCopy.reverse();
+    }
     const handleChangePage = (newPage) => {
         setPage(newPage);
-    };
-
+    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
@@ -129,15 +133,7 @@ export default function ContestHistory(props) {
 
         <>
             <div className="p-2 m-2 border shadow-sm rounded">
-                <LineChart
-                    xAxis={[{ data: ratingBucket }]}
-                    series={[
-                        {
-                            data: userRating,
-                        },
-                    ]}
-                    height={300}
-                />
+                <RatingGraph data={userRatingData} ratingTier = {ratingBucket} maxRating={maxRating}/>
                 <Divider />
                 <TableContainer>
                     <Table>
@@ -157,7 +153,7 @@ export default function ContestHistory(props) {
                                         <TableCell>{item.contestName}</TableCell>
                                         <TableCell sx={{ maxWidth: '200px' }}>{new Date(item.updateTimeSecond * 1000).toString()}</TableCell>
                                         <TableCell>{item.oldRating}</TableCell>
-                                        <TableCell className={(item.oldRating - item.newRating) < 0 ? "text-danger fw-semibold" : "text-success fw-semibold"}>{(item.oldRating - item.newRating)}</TableCell>
+                                        <TableCell className={(item.newRating - item.oldRating) < 0 ? "text-danger fw-semibold" : "text-success fw-semibold"}>{(item.newRating - item.oldRating)}</TableCell>
                                         <TableCell>{item.newRating}</TableCell>
                                     </TableRow>
                                 ))
@@ -193,6 +189,20 @@ export default function ContestHistory(props) {
     )
 }
 
-ContestHistory.propTypes = {
-    contests: PropTypes.array
+function RatingGraph({data}){
+    // const yAxisLimit = 4000
+    return(
+        <>
+            <ResponsiveContainer width='100%' height={300}>
+                <LineChart data={data}>
+                    <CartesianGrid strokeDasharray={'3 3'}/>
+                    <XAxis dataKey={'contest'}/>
+                    <YAxis domain={[0,4000]} />
+                    <Tooltip/>
+                    <Line type={'monotone'} dataKey={'rating'} stroke="#8884d8" strokeWidth={2} dot={{r:4}} activeDot={{r:6}}/>
+                </LineChart>
+            </ResponsiveContainer>
+        </>
+    )
 }
+

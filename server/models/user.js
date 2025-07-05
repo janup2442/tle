@@ -7,8 +7,9 @@ const submissionSchema = new mongoose.Schema({
     contestId:{
         type:Number
     },
-    creationTimeSeconds:{
-        type:Number
+    submittedOn:{
+        type:Number,
+        required:true
     },
     problemIndex:{
         type:String
@@ -64,7 +65,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
     trim: true
   },
   titlePhoto: {
