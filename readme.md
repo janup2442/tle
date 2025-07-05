@@ -19,7 +19,11 @@
 
 
 ![image](https://github.com/user-attachments/assets/4b00cbe0-e4c6-4131-a569-567883bf6298)
-`homepage of codeforces students progress website`
+`homepage of codeforces students progress website (old UI)`
+![cf_1new](https://github.com/user-attachments/assets/0accab26-81b2-437c-8e1a-91a73c9ec191)
+![cf_2new](https://github.com/user-attachments/assets/9ab6528c-da2e-4e3c-8a23-3968bced5f69)
+
+
 ## Server Side Endpoints ## 
 - Implemented on Express.js for server side logic and MongoDb as Database
 - our server listens to PORT = 8500 , and serves to endpoints as /edituser , /students and /studentprofile
@@ -29,3 +33,6 @@
 
 ## Client Side Endpoints ## 
 - 
+![cf_3new](https://github.com/user-attachments/assets/e0377c41-aa43-4e26-bba5-bf41ffb07a57)
+![cf_4new](https://github.com/user-attachments/assets/ba369b5d-1760-42d6-be39-697a21310f87)
+
